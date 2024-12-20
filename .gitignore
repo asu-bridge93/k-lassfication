@@ -1,0 +1,5 @@
+backend/lib/*
+backend/lib64/*
+backend/bin/*
+backend/include/*
+backend/pyvenv.cfg
