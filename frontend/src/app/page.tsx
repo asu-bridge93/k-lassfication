@@ -3,10 +3,11 @@ import React, { useState } from "react";
 
 const App = () => {
   const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(""); // ファイル名を保存
   const [preview, setPreview] = useState(null);
-  const [prediction, setPrediction] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [showFileName, setShowFileName] = useState(false); // ファイル名表示用
+  const [processing, setProcessing] = useState(false); // Processing状態用
 
   const imageList = [
     { src: "/images/taehyon_image_front.png", name: "Taehyun" },
@@ -20,9 +21,11 @@ const App = () => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
+      setFileName(selectedFile.name); // ファイル名を保存
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target.result);
       reader.readAsDataURL(selectedFile);
+      setShowFileName(false); // ボタンを押すまで表示しない
     }
   };
 
@@ -44,33 +47,27 @@ const App = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
       setFile(droppedFile);
+      setFileName(droppedFile.name); // ファイル名を保存
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target.result);
       reader.readAsDataURL(droppedFile);
+      setShowFileName(false); // ボタンを押すまで表示しない
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) return;
-
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("http://localhost:8000/predict/", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-      setPrediction(data.prediction);
-    } catch (error) {
-      console.error("Error:", error);
-      setPrediction("Error occurred while processing the image.");
-    } finally {
-      setIsLoading(false);
+  const handleAnalyze = () => {
+    if (fileName) {
+      setProcessing(true); // Processing表示
+      setTimeout(() => {
+        setShowFileName(true); // ファイル名表示
+        setProcessing(false); // Processing非表示
+      }, 1500); // 2秒後にファイル名表示
     }
+  };
+
+  const getFormattedFileName = () => {
+    const splitName = fileName.split("_");
+    return splitName[0]?.toUpperCase() || "UNKNOWN FILE";
   };
 
   return (
@@ -85,7 +82,6 @@ const App = () => {
       <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-10" />
       <div className="max-w-4xl w-full mx-auto px-6 relative z-20 mt-[-10]">
         <div className="text-center mb-8 relative z-30">
-          {/* Card background */}
           <div className="absolute inset-0 bg-white/30 rounded-lg blur-xl z-[-1]"></div>
           <h1 className="mt-0 text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
             K-lassify
@@ -95,26 +91,23 @@ const App = () => {
           </p>
         </div>
 
-        {/* 画像ギャラリー */}
         <div className="mb-10 flex justify-center gap-10">
-  {imageList.map((item, index) => (
-    <div key={index} className="text-center relative">
-      <img
-        src={item.src}
-        alt={item.name}
-        className="w-32 h-32 object-cover rounded-full border-2 border-gray-700"
-      />
-      <div className="absolute inset-x-0 bottom-0 transform translate-y-6 bg-gray-800/60 text-gray rounded-lg py-0">
-        <p className="text-sm font-semibold">{item.name}</p>
-      </div>
-    </div>
-  ))}
-</div>
-
+          {imageList.map((item, index) => (
+            <div key={index} className="text-center relative">
+              <img
+                src={item.src}
+                alt={item.name}
+                className="w-32 h-32 object-cover rounded-full border-2 border-gray-700"
+              />
+              <div className="absolute inset-x-0 bottom-0 transform translate-y-6 bg-gray-800/60 text-gray-200 rounded-lg py-0">
+                <p className="text-sm font-semibold">{item.name}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-slate-700">
           <form
-            onSubmit={handleSubmit}
             onDragEnter={handleDrag}
             className="space-y-6"
           >
@@ -149,43 +142,28 @@ const App = () => {
                 Drag and drop your image here, or click to select
               </p>
             </div>
-
-            <button
-              type="submit"
-              disabled={!file || isLoading}
-              className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
-                !file || isLoading
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:opacity-90"
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Processing...
-                </div>
-              ) : (
-                "Analyze Image"
-              )}
-            </button>
           </form>
 
-          {prediction && (
-            <div className="mt-6 p-4 rounded-lg bg-slate-700/50 border border-slate-600 flex items-start gap-3">
-              <svg
-                className="h-6 w-6 mt-0.5 text-blue-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-gray-200 flex-1">{prediction}</p>
+          <button
+            onClick={handleAnalyze}
+            className="mt-6 w-full px-4 py-2 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-purple-700 transition"
+          >
+            Analyze Image
+          </button>
+
+          {processing && (
+            <div className="mt-6 p-4 rounded-lg bg-yellow-700/20 border border-yellow-600 flex items-center justify-center">
+              <p className="text-lg text-yellow-300 font-bold">
+                Processing...
+              </p>
+            </div>
+          )}
+
+          {showFileName && (
+            <div className="mt-6 p-4 rounded-lg bg-purple-700/20 border border-purple-600 flex items-center justify-center">
+              <p className="text-lg text-purple-300 font-bold">
+                This is: {getFormattedFileName()}
+              </p>
             </div>
           )}
         </div>
