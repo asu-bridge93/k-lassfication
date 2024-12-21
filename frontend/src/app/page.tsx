@@ -88,10 +88,10 @@ const App = () => {
         <div className="text-center mb-10 relative z-30">
           {/* Card background */}
           <div className="absolute inset-0 bg-white/30 rounded-lg blur-xl z-[-1]"></div>
-          <h1 className="text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
+          <h1 className="mt-1 text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
             K-lassification
           </h1>
-          <p className="text-lg text-gray-200 mt-8">
+          <p className="text-lg text-gray-900 mt-1">
             Upload an image of a TXT member to classify who it is.
           </p>
         </div>
