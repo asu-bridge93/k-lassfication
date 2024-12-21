@@ -92,7 +92,7 @@ const App = () => {
             K-lassification
           </h1>
           <p className="text-lg text-gray-200 mt-8">
-            Upload an image of a TXT member to classify his name.
+            Upload an image of a TXT member to classify who it is.
           </p>
         </div>
 
