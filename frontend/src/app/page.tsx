@@ -83,9 +83,8 @@ const App = () => {
       }}
     >
       <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-10" />
-
-      <div className="max-w-4xl w-full mx-auto px-6 relative z-20">
-        <div className="text-center mb-10 relative z-30">
+      <div className="max-w-4xl w-full mx-auto px-6 relative z-20 mt-[-10]">
+        <div className="text-center mb-8 relative z-30">
           {/* Card background */}
           <div className="absolute inset-0 bg-white/30 rounded-lg blur-xl z-[-1]"></div>
           <h1 className="mt-0 text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
