@@ -1,5 +1,6 @@
 # k-lassfication
-![image](https://github.com/user-attachments/assets/3b8e6bb6-87f1-4523-9c08-6bc421f020b9)
+![Uploading 動プロ_Klassify.png…]()
+
 
 ## Next.js Server (Frontend)
 ```
