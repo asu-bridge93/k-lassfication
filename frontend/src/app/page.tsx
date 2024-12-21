@@ -86,7 +86,7 @@ const App = () => {
 
       <div className="max-w-4xl w-full mx-auto px-6 relative z-20">
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
+          <h1 className="text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
             K-lassification
           </h1>
           <p className="text-lg text-gray-200 mt-8">
@@ -95,18 +95,19 @@ const App = () => {
         </div>
 
         {/* 画像ギャラリー */}
-        <div className="mb-8 flex justify-center gap-4">
+        <div className="mb-8 flex justify-center gap-10">
           {imageList.map((item, index) => (
-            <div key={index} className="text-center">
-              <img
-                src={item.src}
-                alt={item.name}
-                className="w-20 h-20 object-cover rounded-full border-2 border-gray-500"
-              />
-              <p className="text-gray-300 text-sm mt-2">{item.name}</p>
-            </div>
+          <div key={index} className="text-center">
+            <img
+              src={item.src}
+              alt={item.name}
+              className="w-32 h-32 object-cover rounded-full border-2 border-gray-700" // Increased size
+            />
+            <p className="text-gray-200 text-bg mt-2">{item.name}</p>
+          </div>
           ))}
         </div>
+
 
         <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-slate-700">
           <form
