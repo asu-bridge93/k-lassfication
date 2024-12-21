@@ -108,7 +108,8 @@ const App = () => {
           ))}
         </div>
 
-        <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-slate-700">
+        <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-slate-700"
+        style={{ width: "300px", height: "150px" }}>
           <form
             onSubmit={handleSubmit}
             onDragEnter={handleDrag}
