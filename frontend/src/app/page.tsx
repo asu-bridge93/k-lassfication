@@ -108,8 +108,7 @@ const App = () => {
           ))}
         </div>
 
-        <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-slate-700"
-        style={{ width: "300px", height: "150px" }}>
+        <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-slate-700">
           <form
             onSubmit={handleSubmit}
             onDragEnter={handleDrag}
@@ -126,7 +125,7 @@ const App = () => {
             )}
 
             <div
-              className={`relative border-2 border-dashed rounded-lg p-4 text-center transition-all duration-300 ${
+              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 ${
                 dragActive
                   ? "border-purple-400 bg-purple-400/10"
                   : "border-gray-600 hover:border-gray-500"
