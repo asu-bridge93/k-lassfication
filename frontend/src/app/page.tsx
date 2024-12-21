@@ -1,24 +1,178 @@
-// frontend/src/app/page.tsx
-"use client"
-import { useState, useEffect } from 'react';
+"use client";
+import React, { useState } from "react";
 
+const App = () => {
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [prediction, setPrediction] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState(
+    "https://weverse-phinf.pstatic.net/MjAyMjA5MTRfMjQw/MDAxNjYzMTQ0MTI0OTgx.bJ_iQE32D-612FF1Cy7DNMTnTarxvdKzL6FBigezGVMg.qPqN0kEcNpO2gahoPahmoN9t3t76r91updu9qhkORuQg.JPEG/upload_41314287950786405bedebf28-929d-4bb8-afe5-5890e7b2654a.jpg?type=w1414"
+  );
 
-// useStateでmessageという状態を定義し、初期値は空文字列に設定
-// useEffectでfetchを使ってFlaskのAPIを叩き、結果をmessageにセット
-export default function Home() {
-  const [message, setMessage] = useState('');  // メッセージを保持するstate
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onload = (e) => setPreview(e.target.result);
+      reader.readAsDataURL(selectedFile);
+    }
+  };
 
-  useEffect(() => {
-    fetch('http://localhost:5000/')
-      .then((res) => res.text())  // responseをテキストに変換
-      .then((data) => setMessage(data))  // データをセット
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);  // 空の配列を渡すことで初回のみ実行
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const droppedFile = e.dataTransfer.files[0];
+      setFile(droppedFile);
+      const reader = new FileReader();
+      reader.onload = (e) => setPreview(e.target.result);
+      reader.readAsDataURL(droppedFile);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://localhost:8000/predict/", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      setPrediction(data.prediction);
+    } catch (error) {
+      console.error("Error:", error);
+      setPrediction("Error occurred while processing the image.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>Next.js + Flask</h1>
-      <p>{message}</p>
+    <div
+  className="min-h-screen flex items-center justify-center py-16 bg-cover bg-center bg-fixed overflow-hidden relative"
+  style={{
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundColor: "#000",
+  }}
+>
+  {/* 背景オーバーレイ */}
+  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10" />
+
+  {/* メインコンテンツ */}
+  <div className="max-w-4xl w-full mx-auto px-6 relative z-20">
+    {/* ヘッダー */}
+    <div className="text-center mb-12">
+      <h1 className="text-6xl font-extrabold text-transparent bg-gradient-to-r from-gray-800 via-gray-800 to-gray-800 bg-clip-text">
+        K-lassification
+      </h1>
+      <p className="text-lg text-gray-200 mt-8">
+        Upload an image of a TXT member to classify his name.
+      </p>
     </div>
+
+    {/* フォームとプレビュー */}
+    <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-slate-700">
+      <form
+        onSubmit={handleSubmit}
+        onDragEnter={handleDrag}
+        className="space-y-6"
+      >
+        {preview && (
+          <div className="relative overflow-hidden rounded-lg h-96 bg-slate-900/50 flex items-center justify-center">
+            <img
+              src={preview}
+              alt="Preview"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        )}
+
+        <div
+          className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 ${
+            dragActive
+              ? "border-purple-400 bg-purple-400/10"
+              : "border-gray-600 hover:border-gray-500"
+          }`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          <input
+            type="file"
+            onChange={handleFileChange}
+            accept="image/*"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          <p className="text-gray-300 text-sm">
+            Drag and drop your image here, or click to select
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={!file || isLoading}
+          className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
+            !file || isLoading
+              ? "bg-gray-600 cursor-not-allowed"
+              : "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:opacity-90"
+          }`}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Processing...
+            </div>
+          ) : (
+            "Analyze Image"
+          )}
+        </button>
+      </form>
+
+      {prediction && (
+        <div className="mt-6 p-4 rounded-lg bg-slate-700/50 border border-slate-600 flex items-start gap-3">
+          <svg
+            className="h-6 w-6 mt-0.5 text-blue-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p className="text-gray-200 flex-1">{prediction}</p>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
   );
-}
+};
+
+export default App;

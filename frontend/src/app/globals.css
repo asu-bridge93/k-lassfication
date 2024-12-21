@@ -18,4 +18,12 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url('https://weverse-phinf.pstatic.net/MjAyMjA5MTRfMjQw/MDAxNjYzMTQ0MTI0OTgx.bJ_iQE32D-612FF1Cy7DNMTnTarxvdKzL6FBigezGVMg.qPqN0kEcNpO2gahoPahmoN9t3t76r91updu9qhkORuQg.JPEG/upload_41314287950786405bedebf28-929d-4bb8-afe5-5890e7b2654a.jpg?type=w1414'); /* 画像のURLを設定 */
+  background-size: cover; /* 背景画像を全体にフィット */
+  background-position: center; /* 中央に配置 */
+  background-attachment: fixed; /* スクロール時に背景を固定 */
+  background-repeat: no-repeat; /* 繰り返しを防ぐ */
+  height: 100vh; /* ビューポートの高さに合わせる */
 }
