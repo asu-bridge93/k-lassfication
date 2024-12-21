@@ -85,7 +85,9 @@ const App = () => {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10" />
 
       <div className="max-w-4xl w-full mx-auto px-6 relative z-20">
-        <div className="text-center mb-12">
+        <div className="text-center mb-10 relative z-30">
+          {/* Card background */}
+          <div className="absolute inset-0 bg-white/30 rounded-lg blur-xl z-[-1]"></div>
           <h1 className="text-7xl font-extrabold text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 bg-clip-text">
             K-lassification
           </h1>
@@ -95,18 +97,20 @@ const App = () => {
         </div>
 
         {/* 画像ギャラリー */}
-        <div className="mb-8 flex justify-center gap-10">
-          {imageList.map((item, index) => (
-          <div key={index} className="text-center">
-            <img
-              src={item.src}
-              alt={item.name}
-              className="w-32 h-32 object-cover rounded-full border-2 border-gray-700" // Increased size
-            />
-            <p className="text-gray-200 text-bg mt-2">{item.name}</p>
-          </div>
-          ))}
-        </div>
+        <div className="mb-10 flex justify-center gap-10">
+  {imageList.map((item, index) => (
+    <div key={index} className="text-center relative">
+      <img
+        src={item.src}
+        alt={item.name}
+        className="w-32 h-32 object-cover rounded-full border-2 border-gray-700"
+      />
+      <div className="absolute inset-x-0 bottom-0 transform translate-y-6 bg-gray-800/60 text-gray rounded-lg py-0">
+        <p className="text-sm font-semibold">{item.name}</p>
+      </div>
+    </div>
+  ))}
+</div>
 
 
         <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-slate-700">
