@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 
 const App = () => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState(""); // ファイル名を保存
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [showFileName, setShowFileName] = useState(false); // ファイル名表示用
   const [processing, setProcessing] = useState(false); // Processing状態用
@@ -17,19 +17,20 @@ const App = () => {
     { src: "/images/hueningkai_image_front.png", name: "Hueningkai" },
   ];
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile);
+      setFile(selectedFile); // ファイルを保存
       setFileName(selectedFile.name); // ファイル名を保存
       const reader = new FileReader();
-      reader.onload = (e) => setPreview(e.target.result);
+      reader.onload = (e: ProgressEvent<FileReader>) =>
+        setPreview(e.target?.result as string); // プレビュー画像を保存
       reader.readAsDataURL(selectedFile);
       setShowFileName(false); // ボタンを押すまで表示しない
     }
   };
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -39,17 +40,18 @@ const App = () => {
     }
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      setFile(droppedFile);
+      setFile(droppedFile); // ドラッグ&ドロップされたファイルを保存
       setFileName(droppedFile.name); // ファイル名を保存
       const reader = new FileReader();
-      reader.onload = (e) => setPreview(e.target.result);
+      reader.onload = (e: ProgressEvent<FileReader>) =>
+        setPreview(e.target?.result as string);
       reader.readAsDataURL(droppedFile);
       setShowFileName(false); // ボタンを押すまで表示しない
     }
@@ -61,7 +63,7 @@ const App = () => {
       setTimeout(() => {
         setShowFileName(true); // ファイル名表示
         setProcessing(false); // Processing非表示
-      }, 1500); // 2秒後にファイル名表示
+      }, 1500); // 1.5秒後にファイル名表示
     }
   };
 
