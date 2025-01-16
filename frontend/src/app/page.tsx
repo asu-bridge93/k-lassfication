@@ -20,7 +20,7 @@ const App = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile); // ファイルを保存
+      setFile(selectedFile);
       setFileName(selectedFile.name); // ファイル名を保存
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) =>
